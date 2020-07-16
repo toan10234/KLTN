@@ -1,8 +1,9 @@
 import React,{ Component } from "react";
-import { View,Text,TouchableOpacity,StyleSheet,TextInput,Image,Alert,FlatList } from 'react-native';
+import { View,Text,TouchableWithoutFeedback,Keyboard,TouchableOpacity,StyleSheet,TextInput,Image,Alert,FlatList,ScrollView } from 'react-native';
 //import ChiTietDuAn from '../ChiTietDuAn';
 import flatListData from './../../../assets/data/FlatListData';
-import {ToBinhLuanAction} from './../../../redux/actions'
+import {ToBinhLuanAction,ActiondBtnTimKiem,ActionGoToChiTiet,ActionGotoSuacanHo,ActionXoaCanHo} from './../../../redux/actions';
+import {ActiondBtnYeuThich} from './../../../redux/actions';
 import Icon from 'react-native-vector-icons/Octicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
@@ -10,25 +11,40 @@ import { connect } from "react-redux";
 
  class KhamPha extends Component{
     
-        
+    constructor(props){
+        super(props);
+        this.state={
+            infor:'',
+        };
+    }
     render(){
         
         return(
+            <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                         <View style={{flexDirection:"row",alignItems:'center'}}>
                             <View style={styles.containerSearch}>
                                  <TextInput style={styles.input}
                                      placeholder="Search..."
-                                     placeholderTextColor='black'>
+                                     placeholderTextColor='black'
+                                     onChangeText={(text) => this.setState({infor:text})}
+                                     value={this.state.infor}>
                                   </TextInput>
-                                  
-                                   <Icon style={styles.iconstyle} name="search" color='#3C4856' size={26}></Icon>
+                                
+                                  <TouchableOpacity  onPress={()=> {
+                                      const {infor}=this.state;
+                                      const token=this.props.token;
+                                      this.props.onTimKiem({infor,token})
+                                  }}>
+                                     <Icon style={styles.iconstyle} name="search" color='#3C4856' size={26}></Icon>
+                                  </TouchableOpacity>
+                                   
                                   
                             </View>
-                            {(this.props.admin===1)? <TouchableOpacity onPress={()=> {this.props.navigation.navigate('BinhLuan')}}>
+                            {(this.props.admin===1)? <TouchableOpacity onPress={()=> {this.props.navigation.navigate('ThemCanHo')}}>
                                                                    <Icon2 name="home-plus" color='#EC4434' size={27} style={{margin:12}}></Icon2>
                                                                  </TouchableOpacity>:null}
-                            <TouchableOpacity onPress={()=> {this.props.gotoBinhLuan}}>
+                            <TouchableOpacity onPress={()=> {this.props.navigation.navigate('LienHe2')}}>
                                 <Icon3 style={styles.iconcontract} name="contact-phone" color='#3C4856' size={30}></Icon3>  
                             </TouchableOpacity>
                             
@@ -37,10 +53,15 @@ import { connect } from "react-redux";
 
                     <View   style={styles.containerInfomasion}>
                             <FlatList data={this.props.mang}
+                            keyExtractor={item => item.IDCanHo.toString()}
                             renderItem={({item,index})=>{
                                 return(
                                     <View style={{flex:1,borderRadius:5,backgroundColor:"rgba(255,255,255,0.6)",margin:3}}>
-                                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ChiTietDuAn')}>
+                                        <TouchableOpacity onPress={() => {
+                                                    const IDCanHo=item.IDCanHo;
+                                                    this.props.gotoChitiet(IDCanHo)
+                                                    this.props.navigation.navigate('ChiTietDuAn')
+                                                    }}>
                                               <Image source={{uri:item.HinhAnh}}
                                                             style={{height:190,margin:3,borderRadius:8}}>
                                              </Image>
@@ -54,7 +75,12 @@ import { connect } from "react-redux";
                                         <View style={{flexDirection:"row"}}>
                                         <View style={{width:"38%",height:75,marginLeft:3}}>
                                                             <View style={{flexDirection:"row"}}>
-                                                                   <TouchableOpacity onPress={()=> {Alert.alert('Added successfully')}}>
+                                                                   <TouchableOpacity onPress={()=> {Alert.alert('Added successfully')
+                                                                        const IDCanHo=item.IDCanHo;
+                                                                        const idTK=this.props.idTK;
+                                                                        const token=this.props.token;
+                                                                        this.props.onYeuThich({IDCanHo,idTK,token})
+                                                                   }}>
                                                                     <Icon2 name="heart-outline" color='#EC4434' size={26} style={{marginLeft:6}}></Icon2>
                                                                   </TouchableOpacity>
                                                                   <TouchableOpacity onPress={()=> {
@@ -62,10 +88,17 @@ import { connect } from "react-redux";
                                                                       this.props.navigation.navigate('BinhLuan')}}>
                                                                    <Icon2 name="comment-text-multiple-outline" color='#EC4434' size={23} style={{marginLeft:6}}></Icon2>
                                                                  </TouchableOpacity>
-                                                                 {(this.props.admin===1)? <TouchableOpacity onPress={()=> {this.props.navigation.navigate('BinhLuan')}}>
+                                                                 {(this.props.admin===1)? <TouchableOpacity onPress={()=> {
+                                                                     this.props.gotoSuaCanHo(item.IDCanHo)
+                                                                     this.props.navigation.navigate('SuaCanHo')
+                                                                     }}>
                                                                    <Icon2 name="content-save-edit-outline" color='#EC4434' size={26} style={{marginLeft:7}}></Icon2>
                                                                  </TouchableOpacity>:null}
-                                                                 {(this.props.admin===1)? <TouchableOpacity onPress={()=> {this.props.navigation.navigate('BinhLuan')}}>
+                                                                 {(this.props.admin===1)? <TouchableOpacity onPress={()=> {
+                                                                        const token=this.props.token
+                                                                        const IDCanHo=item.IDCanHo
+                                                                        this.props.onXoaCanHo({IDCanHo,token})
+                                                                 }}>
                                                                    <Icon2 name="delete-forever-outline" color='#EC4434' size={26} style={{marginLeft:6}}></Icon2>
                                                                  </TouchableOpacity>:null}
                                                             </View>    
@@ -102,19 +135,23 @@ import { connect } from "react-redux";
                                              </View>
                     
                                             <View style={{width:"60%",height:100,marginLeft:7,marginTop:10}}>
-                                                            <Text style={{fontStyle: 'italic',color:"rgba(0,0,0,0.6)"}}>{item.ThongTin}</Text>
+                                                            <Text style={{fontStyle: 'italic',color:"rgba(0,0,0,0.9)"}}>Address :{item.DiaChi}</Text>
+                                                            <ScrollView>
+                                                                <Text style={{fontStyle: 'italic',color:"rgba(0,0,0,0.6)"}}>{item.ThongTin}</Text>
+                                                            </ScrollView>
+                                                            
                                             </View>
                                                             
                                         </View>
                                     </View>
                                 );
-                            }}keyExtractor={item => item.IDCanHo}
+                            }}
                             >
 
                             </FlatList>
                      </View>
                 </View>
-               
+                </TouchableWithoutFeedback>
         )
     }
 }
@@ -136,13 +173,30 @@ function mapStatetoProps(state){
         mang:state.canHoReducers.mang,
         token:state.dangNhapReducers.token,
         admin:state.dangNhapReducers.admin,
+        idTK:state.dangNhapReducers.idTK,
+        message:state.dangNhapReducers.message,
     }
 }
 const mapDispatchToProps=(dispatch)=>{
     return{
         gotoBinhLuan:(inputIDCanHo)=>{
             dispatch(ToBinhLuanAction(inputIDCanHo));
-        }
+        },
+        onYeuThich:(inputBtnYeuThich)=>{
+            dispatch(ActiondBtnYeuThich(inputBtnYeuThich))
+        },
+        onTimKiem:(inputTimKiem)=>{
+            dispatch(ActiondBtnTimKiem(inputTimKiem))
+        },
+        gotoChitiet:(IDCanHo)=>{
+            dispatch(ActionGoToChiTiet(IDCanHo))
+        },
+        gotoSuaCanHo:(inputIDCanHo)=>{
+            dispatch(ActionGotoSuacanHo(inputIDCanHo))
+        },
+        onXoaCanHo:(inputIDCanHo)=>{
+            dispatch(ActionXoaCanHo(inputIDCanHo))
+        },
     }
 }
 

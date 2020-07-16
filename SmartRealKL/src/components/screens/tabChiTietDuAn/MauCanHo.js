@@ -3,7 +3,7 @@ import { View,Text,StyleSheet,Image,TouchableOpacity  } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
-
+import { WebView } from 'react-native-webview';
 
 export default class MauCanHo extends Component{
     render(){
@@ -20,8 +20,13 @@ export default class MauCanHo extends Component{
                        <Icon3 style={styles.iconbook} name="shopping-cart" color='black' size={26}></Icon3>
                    </TouchableOpacity>
                </View>
-                <View>
-                 
+               <View style={{flex:1}}>
+                <WebView 
+                    source={{
+                    uri: 'http://192.168.5.4:62153/'
+                }}
+                style={{ marginTop: 20}}
+             />
                 </View>
            </View>
         )

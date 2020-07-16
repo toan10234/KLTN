@@ -10,6 +10,8 @@ const appBlue = '#29b6f6';
 const appYellow = '#f7c025';
 const appRed = '#EC4434';
 const appPink = '#fe4d82';
+const appYellow2 = '#CB9D31';
+const appblue2 = '#3C4856';
 // Overlay
 const overlay1 = 'rgba(0,0,0,0.1)';
 const overlay2 = 'rgba(0,0,0,0.2)';
@@ -46,7 +48,8 @@ export default {
   appYellow,
   appRed,
   appPink,
-
+  appYellow2,
+  appblue2,
   // Overlay
   overlay1,
   overlay2,

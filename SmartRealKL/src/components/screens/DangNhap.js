@@ -1,8 +1,10 @@
 import React,{ Component } from "react";
 import { Text,View ,TextInput,SafeAreaView,TouchableOpacity,StyleSheet,Image,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/Feather';
+// import * as sleep from 'await-sleep';
 import { connect } from "react-redux";
-
+// import * as delay from 'delay';
 import {DangNhapAction}from './../../redux/actions';
 // import { Field , reduxForm} from 'redux-form';
 // const renderField=({keyboardType,name})=>{
@@ -12,13 +14,61 @@ import {DangNhapAction}from './../../redux/actions';
 //         </TextInput>
 //     );
 // };
+// async function checklogin(username,password){
+//     await this.props.onDangNhap({username,password});
+//     if(this.props.err!=''){
+//         alert(`${err}`);
+//     }
+//     else{
+//         this.props.navigation.navigate('ManHinhChinh')
+//     }
+// }
  class DangNhap extends Component{
     constructor(props){
         super(props);
         this.state={username:'',password:''};
     }
+     
+    //  async  checklogin(input){
+    //      const username=input.username;
+    //      const password=input.password;
+    //      await this.props.onDangNhap({username,password});
+         
+    //     if(this.props.err!=''){
+    //         alert(`${err}`);
+    //     }
+    //     else{
+    //         alert(`${error}`);
+    //        this.props.navigation.navigate('ManHinhChinh')
+    //     }
+    // }
+    
+    delay(){
+    return new Promise((resolve, reject) => {    
+            if (this.props.loading==="false") {         
+               resolve(true);          
+            } else {
+                reject(false);
+                
+            }
+    })
+    }
+    _signin = async (input) => {
+         const username=input.username;
+         const password=input.password;
+         this.props.onDangNhap({username,password})
+       if(this.props.loading)
+          console.log("thành cong");
+        if (
+          this.props.message!=''
+        ) {
+          alert(`${this.props.message}`)
+        } else {
+            this.props.navigation.navigate('ManHinhChinh')
+        }
+      };
     render(){
-        const {handleSubmit}=this.props;
+        //const {handleSubmit}=this.props;
         return(
             <SafeAreaView style={styles.container}>
             
@@ -34,7 +84,7 @@ import {DangNhapAction}from './../../redux/actions';
                 <View style={styles.infoContainer}>
                     <View style={styles.coverContainer}>
                       
-                            <Icon style={styles.iconContainer} name="email-outline" color='#CB9D31' size={26} />
+                            <Icon2 style={styles.iconContainer} name="user" color='#CB9D31' size={26} />
                             <Text style={styles.symbol}>|</Text>
                             <TextInput style={styles.input}
                             placeholder="Enter username ..."
@@ -69,10 +119,14 @@ import {DangNhapAction}from './../../redux/actions';
                               //   onPress={() => this.props.navigation.navigate('ManHinhChinh')}
                               onPress={() => {
                               const {username,password}=this.state;
+                              const err=this.props.err;
+                              const message=this.props.message;
                               if (!username.length || !password.length){
-                                alert('you must  enter  usernam and password')
+                                alert('you must  enter  username and password')
                                 return; 
                               }
+                              //this._signin({username,password,message})
+                              // this.checklogin({username,password,err});
                               this.props.onDangNhap({username,password});
                               this.props.navigation.navigate('ManHinhChinh')
                               }}
@@ -94,8 +148,9 @@ const mapStatetoProps=(state)=>{
         //kết quả lấy từ reducer
         idtk:state.dangNhapReducers.idtk,
         err:state.dangNhapReducers.err,
-        ketqua:state.dangNhapReducers.ketqua
-       
+        ketqua:state.dangNhapReducers.ketqua,
+        message:state.dangNhapReducers.message,
+        loading:state.dangNhapReducers.loading,
     }
 }
 const mapDispatchToProps=(dispatch)=>{

@@ -81,6 +81,8 @@ target 'SmartRealKL' do
 
   pod 'react-native-maps', :path => '../node_modules/react-native-maps'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'SmartRealKLTests' do
     inherit! :complete
     # Pods for testing

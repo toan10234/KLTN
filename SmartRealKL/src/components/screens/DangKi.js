@@ -2,7 +2,13 @@ import React,{ Component } from "react";
 import { Text,View ,TextInput,TouchableOpacity,StyleSheet,Image,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard} from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFeather from 'react-native-vector-icons/Feather';
-export default class DangKi extends Component{
+import { connect } from "react-redux";
+import {ActionDangKi1} from "../../redux/actions";
+class DangKi extends Component{
+    constructor(props){
+        super(props);
+        this.state={username:'',password:'',email:''};
+    }
     render(){
         return(
             
@@ -26,6 +32,8 @@ export default class DangKi extends Component{
                             returnKeyType='next'
                             autoCorect={false}
                             onSubmitEnding={()=>this.txtPassword.focus()}
+                            onChangeText={(text) => this.setState({username:text})}
+                            value={this.state.username}
                             >
                             </TextInput>
                         
@@ -42,6 +50,8 @@ export default class DangKi extends Component{
                             returnKeyType='next'
                             autoCorect={false}
                             onSubmitEnding={()=>this.txtPassword.focus()}
+                            onChangeText={(text) => this.setState({email:text})}
+                            value={this.state.email}
                             >
                             </TextInput>
                         
@@ -56,12 +66,21 @@ export default class DangKi extends Component{
                         autoCorect={false}
                         secureTextEntry
                         ref={"txtPassword"}
+                        onChangeText={(text) => this.setState({password:text})}
+                        value={this.state.password}
                         >
                         </TextInput>
                     </View>
                    
                     <TouchableOpacity style={styles.buttoncontainer}
-                    onPress={() => this.props.navigation.navigate('DangKi2')}>
+                    onPress={() =>{
+                        const {username,password,email}=this.state;
+                              if (!username.length || !password.length || !email.length){
+                                alert('you must  enter  username ,email and password ')
+                                return; 
+                              }
+                              this.props.onDangKi1({username,password,email});
+                            this.props.navigation.navigate('DangKi2')}}>
                         <Text style={styles.btntext}>Next</Text>
                     </TouchableOpacity>
                 </View>
@@ -73,6 +92,26 @@ export default class DangKi extends Component{
         );
     }
 }
+function mapStatetoProps(state){
+    return{
+        //kết quả lấy từ reducer
+        // ketqua:state.canHoReducers.ketqua,
+        // loading:state.canHoReducers.loading,
+        // err:state.canHoReducers.err,
+        // mang:state.canHoReducers.mang,
+        // token:state.dangNhapReducers.token,
+        // admin:state.dangNhapReducers.admin,
+        // idTK:state.dangNhapReducers.idTK,
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onDangKi1:(inputTK)=>{
+            dispatch(ActionDangKi1(inputTK));
+        }
+    }
+}
+export default connect(mapStatetoProps,mapDispatchToProps)(DangKi);
 const styles=StyleSheet.create({
     container:{
         flex:1,

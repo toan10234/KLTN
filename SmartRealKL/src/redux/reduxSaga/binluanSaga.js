@@ -8,41 +8,44 @@ import { fetchData ,putNewBinhLuan} from './api/APIbinhLuan';
 
 function* fetchDataBinhLuan(action){
     try{
-        yield put({type:LOADING_TRUE});
+   
       
         const receivedBinhLuan=yield fetchData(action.inputIDCanHo);
         
         yield put({type:FETCH_SUCCEESED_BINHLUAN,receivedBinhLuan});
-        yield put({type:LOADING_FALSE});
+   
        // yield delay(1000)
     }catch(error){
-        yield put({type:LOADING_TRUE});
+
         console.log('đi đến trang bình luận');
-        yield delay(1000);
-        yield put({type:LOADING_FALSE});
+       // yield delay(1000);
+
     }
 }
+export function* watchfetchBinhLuan(){
+    yield takeLatest(TO_BINH_LUAN,fetchDataBinhLuan)
+}
+
 function* fetchNewBinhLuan(action){
     try{
         yield put({type:LOADING_TRUE});
       
-        const receivedBinhLuan=yield putNewBinhLuan(action.inputIDCanHo);
+        yield putNewBinhLuan(action.inputBinhLuan);
         
+        
+        const idCanHo=action.inputBinhLuan.idCanHoBL;
+        
+        console.log(`id can ho saga to binh luan :${idCanHo}`)
+        
+        const receivedBinhLuan=yield fetchData(idCanHo);
         yield put({type:FETCH_SUCCEESED_BINHLUAN,receivedBinhLuan});
-        yield put({type:TO_BINH_LUAN});
         yield put({type:LOADING_FALSE});
        // yield delay(1000)
     }catch(error){
         console.log('không thể bình luận');
     }
 }
-
-
-
- function* watchfetchBinhLuan(){
-    yield takeLatest(TO_BINH_LUAN,fetchDataBinhLuan)
+export function* watchBinhLuan(){
+    yield takeEvery(BINH_LUAN,fetchNewBinhLuan)
 }
-function* watchBinhLuan(){
-    yield takeLatest(BINH_LUAN,fetchNewBinhLuan)
-}
-export default watchfetchBinhLuan;
+

@@ -1,14 +1,13 @@
 
 import {routerAPI} from './Router'
 
-import axios from 'axios';
 
 export async function fetchDataThongTinTK(idTK){
     try{
         const urlGetThongTinTK=`${routerAPI}/thongtintaikhoan/${idTK}}`;
         const response=await fetch(urlGetThongTinTK);
         const dataRecied=await response.json();
-        console.log(` ${JSON.stringify(dataRecied)}`)
+        console.log(`thong tin tai khoan ${JSON.stringify(dataRecied)}`)
         //console.log(`repone: ${dataRecied}`)
         return dataRecied;
     }catch(e){

@@ -3,7 +3,13 @@ import { Text,View ,TextInput,TouchableOpacity,StyleSheet,Image,KeyboardAvoiding
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import IconFeather from 'react-native-vector-icons/Feather';
-export default class DangKi2 extends Component{
+import { connect } from "react-redux";
+import {ActionDangKi2} from '../../redux/actions';
+ class DangKi2 extends Component{
+    constructor(props){
+        super(props);
+        this.state={hovaten:'',sodienthoai:'',diachi:''};
+    }
     render(){
         return(
             
@@ -27,6 +33,8 @@ export default class DangKi2 extends Component{
                             returnKeyType='next'
                             autoCorect={false}
                             onSubmitEnding={()=>this.txtPassword.focus()}
+                            onChangeText={(text) => this.setState({hovaten:text})}
+                            value={this.state.hovaten}
                             >
                             </TextInput>
                         
@@ -42,6 +50,8 @@ export default class DangKi2 extends Component{
                             returnKeyType='next'
                             autoCorect={false}
                             onSubmitEnding={()=>this.txtPassword.focus()}
+                            onChangeText={(text) => this.setState({sodienthoai:text})}
+                            value={this.state.sodienthoai}
                             >
                             </TextInput>
                         
@@ -57,12 +67,24 @@ export default class DangKi2 extends Component{
                             returnKeyType='next'
                             autoCorect={false}
                             onSubmitEnding={()=>this.txtPassword.focus()}
+                            onChangeText={(text) => this.setState({diachi:text})}
+                            value={this.state.diachi}
                             >
                             </TextInput>
                         
                     </View>
                     <TouchableOpacity style={styles.buttoncontainer}
-                    onPress={() => this.props.navigation.navigate('DangNhap')}>
+                    onPress={() =>{
+                        const {hovaten,sodienthoai,diachi}=this.state;
+                              if (!hovaten.length || !sodienthoai.length || !diachi.length){
+                                alert('you must  enter  name ,phone and address ')
+                                return; 
+                              }
+                              const idtk=this.props.idTK;
+                              const email=this.props.email;
+                              console.log(`id tk :${idtk}`)
+                              this.props.onDangKi2({hovaten,sodienthoai,diachi,idtk,email});
+                         this.props.navigation.navigate('DangNhap')}}>
                         <Text style={styles.btntext}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
@@ -74,6 +96,21 @@ export default class DangKi2 extends Component{
         );
     }
 }
+function mapStatetoProps(state){
+    return{
+        //kết quả lấy từ reducer
+        idTK:state.dangkiReducers.idTK,
+        email:state.dangkiReducers.email,
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onDangKi2:(inputDangKi2)=>{
+            dispatch(ActionDangKi2(inputDangKi2));
+        }
+    }
+}
+export default connect(mapStatetoProps,mapDispatchToProps)(DangKi2);
 const styles=StyleSheet.create({
     container:{
         flex:1,

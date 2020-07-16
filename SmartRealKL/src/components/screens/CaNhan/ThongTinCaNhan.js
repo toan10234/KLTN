@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
-import { Text, View,StyleSheet ,TouchableOpacity,TextInput } from 'react-native'
-
-export default class ThongTinCaNhan extends Component {
+import { Text, View,StyleSheet ,TouchableOpacity,TextInput,KeyboardAvoidingView } from 'react-native'
+import { connect } from "react-redux";
+import {ActionDoiThongTin} from './../../../redux/actions';
+class ThongTinCaNhan extends Component {
+    constructor(props){
+        super(props);
+        this.state={hovaten:`${this.props.hovaten}`,email:`${this.props.email}`,sodienthoai:`${this.props.sodienthoai}`,diachi:`${this.props.diachi}`};
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -10,12 +15,16 @@ export default class ThongTinCaNhan extends Component {
                 </View>
 
                 <View style={styles.containerinfomation}>
-                 <View style={styles.containerinput}>
+                <KeyboardAvoidingView behavior='padding' style={styles.container}>
+                <View>
+                <View style={styles.containerinput}>
                         <Text style={styles.titleinput}>Name</Text>
                         <TextInput style={styles.input}
                         placeholder="Enter Name ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({hovaten:text})}
+                        value={this.state.hovaten}
                         />
                    </View>
                    <View style={styles.containerinput}>
@@ -24,6 +33,8 @@ export default class ThongTinCaNhan extends Component {
                         placeholder="Enter phone ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({sodienthoai:text})}
+                        value={this.state.sodienthoai}
                         />
                    </View>
                    <View style={styles.containerinput}>
@@ -32,6 +43,8 @@ export default class ThongTinCaNhan extends Component {
                         placeholder="Enter email ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({email:text})}
+                        value={this.state.email}
                         />
                    </View>
                    <View style={styles.containerinput}>
@@ -40,10 +53,15 @@ export default class ThongTinCaNhan extends Component {
                         placeholder="Enter address ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({diachi:text})}
+                        value={this.state.diachi}
                         />
                    </View>
                 </View>
-
+                </KeyboardAvoidingView>
+                 
+                </View>
+                <View style={styles.containerbutton}>
                 <View style={styles.containerbtn}>
                    <TouchableOpacity    style={styles.button}
                         onPress={() => this.props.navigation.navigate('CaNhan')}>
@@ -51,15 +69,47 @@ export default class ThongTinCaNhan extends Component {
                         
                    </TouchableOpacity>
                    <TouchableOpacity    style={styles.button}
-                        onPress={() => this.props.navigation.navigate('DangNhap')}>
+                        onPress={() => {
+                            const {hovaten,email,sodienthoai,diachi}=this.state;
+                              const idThongTinTK=this.props.idThongTinTK;
+                              const token=this.props.token;
+                              const idTK=this.props.idTK
+                              if (!hovaten.length || !email.length||!sodienthoai.length || !diachi.length ){
+                                alert('you must  enter full infomation')
+                                return; 
+                              }
+                              this.props.onDoiThongTin({hovaten,email,sodienthoai,diachi,idThongTinTK,token,idTK});
+                               this.props.navigation.navigate('CaNhan')
+                            }}>
                         <Text style={styles.textbtn}>Confirm</Text>
                    </TouchableOpacity>
                 </View>
-                
+                </View>
             </View>
         )
     }
 }
+function mapStatetoProps(state){
+    return{
+        //kết quả lấy từ reducer    
+        token:state.dangNhapReducers.token,
+        idThongTinTK:state.thongTinTKReducers.idThongTinTK,
+        hovaten:state.thongTinTKReducers.hovaten,
+        sodienthoai:state.thongTinTKReducers.sodienthoai,
+        email:state.thongTinTKReducers.email,
+        diachi:state.thongTinTKReducers.diachi,
+        idTK:state.dangNhapReducers.idTK
+       
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onDoiThongTin:(inputDoiThongTin)=>{
+            dispatch(ActionDoiThongTin(inputDoiThongTin));
+        }
+    }
+}
+export default connect(mapStatetoProps,mapDispatchToProps)(ThongTinCaNhan)
 const styles=StyleSheet.create({
     container:{
         backgroundColor:'#F2C94D',
@@ -77,11 +127,11 @@ const styles=StyleSheet.create({
     
     },
     containerinfomation:{
-        flex:0.65,
-        marginTop:10,
-        marginLeft:10,
-        marginRight:10,
-        borderRadius:5,
+        position:"absolute",
+        left:10,
+        right:10,
+        bottom:70,
+        height:280,
         elevation:5,
         justifyContent:'center',
         backgroundColor:"#CB9D31",
@@ -103,7 +153,8 @@ const styles=StyleSheet.create({
       
     },
     button:{
-        flex:0.4,
+        height:40,
+        width:120,
         margin:5,
         borderRadius:5,
         borderWidth: 2,
@@ -118,7 +169,7 @@ const styles=StyleSheet.create({
     },
     containerinput:{
         flexDirection:'row',
-        flex:0.2,
+        height:50,
         borderRadius:5,
         margin:10,
         backgroundColor:"#F2C94D"
@@ -137,5 +188,15 @@ const styles=StyleSheet.create({
         margin:4,
         alignSelf:'center',
         backgroundColor:'#3C4856'
+    },
+    containerbutton:{
+        position:"absolute",
+        left:10,
+        right:10,
+        bottom:40,
+        height:60,
+        elevation:5,
+        justifyContent:'center',
+     
     }
 })

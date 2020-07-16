@@ -17,9 +17,11 @@ class CaNhan extends Component{
                     <View style={styles.imagescontainer}>
                         <Image style={styles.imagesavatar} source={require('../../../assets/images/avatar.jpg')} />
                         <View   style={styles.containerprofile}>
-                            <Text style={{fontSize:15,fontWeight:'bold'}}>{this.props.thongtinTK[0].HoVaTen}</Text>
-                            <Text style={{fontSize:13}}>{this.props.thongtinTK[0].Email}</Text>
-                            <Text style={{fontSize:13}}>{this.props.thongtinTK[0].SoDienThoai}</Text>
+                            <Text style={{fontSize:15,fontWeight:'bold'}}>{this.props.hovaten}</Text>
+                            
+                            <Text style={{fontSize:13}}>{this.props.sodienthoai}</Text>
+                            <Text style={{fontSize:13}}>{this.props.email}</Text>
+                            <Text style={{fontSize:13}}>{this.props.diachi}</Text>
                         </View>
                     </View>
                 </ImageBackground>
@@ -40,7 +42,7 @@ class CaNhan extends Component{
                         <Text> version 1.0.0 </Text>
                     </View>
                     <TouchableOpacity style={styles.btnSinout}
-                         onPress={() => this.props.navigation.navigate('DangNhap')}>
+                         onPress={() => this.props.navigation.navigate('ManHinhBatDau')}>
                         <Text style={styles.btntextSignout}>Sign out</Text>
                     </TouchableOpacity>
                 </View>
@@ -50,7 +52,11 @@ class CaNhan extends Component{
 }
 function mapStatetoProps(state){
     return{
-        thongtinTK:state.thongTinTKReducers.thongtinTK,
+        
+        hovaten:state.thongTinTKReducers.hovaten,
+        email:state.thongTinTKReducers.email,
+        sodienthoai:state.thongTinTKReducers.sodienthoai,
+        diachi:state.thongTinTKReducers.diachi
     }
 }
 export default connect(mapStatetoProps)(CaNhan);
@@ -103,6 +109,7 @@ const styles=StyleSheet.create({
         flexDirection:'column',
         backgroundColor:"rgba(0,0,0,0)",
         marginLeft:10,
+        width:200
     },
     buttoncontainer:{
         flex:0.12,

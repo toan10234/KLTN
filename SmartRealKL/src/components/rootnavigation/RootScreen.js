@@ -26,7 +26,11 @@ import BinhLuan from './../screens/BinhLuan';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/Octicons';
 import Icon3 from 'react-native-vector-icons/Entypo';
+import LienHe2 from './../screens/LienHe2';
+import ThemCanHo from '../screens/tabManHinhChinh/admin/ThemCanHo';
+import SuaCanHo from './../screens/tabManHinhChinh/admin/SuaCanHo';
 import { connect } from "react-redux";
+
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const Tab1 = createBottomTabNavigator();
@@ -88,7 +92,7 @@ function ChiTietDuAn() {
       <Tab1.Navigator style={{backgroundColor:'#F2C94D'}} 
       tabBarOptions={{
           activeTintColor: '#e91e63',
-          inactiveTintColor: 'gray',
+          inactiveTintColor: 'black',
           activeBackgroundColor: '#F2C94D',
           inactiveBackgroundColor:'#F2C94D',
           labelStyle:{
@@ -124,6 +128,9 @@ function ChiTietDuAn() {
                     <Stack.Screen name="XacNhanTT" component={XacNhanTT} />
                     <Stack.Screen name="XacNhanDat" component={XacNhanDat} />
                     <Stack.Screen name="BinhLuan" component={BinhLuan} />
+                    <Stack.Screen name="LienHe2" component={LienHe2} />
+                    <Stack.Screen name="ThemCanHo" component={ThemCanHo} />
+                    <Stack.Screen name="SuaCanHo" component={SuaCanHo} />
                 </Stack.Navigator>
             </NavigationContainer>
         )

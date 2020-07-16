@@ -1,20 +1,22 @@
 import React, { Component } from 'react'
 import { Text, View ,Image ,StyleSheet,TouchableOpacity} from 'react-native'
-
-export default class XacNhanDat extends Component {
+import {connect} from 'react-redux';
+import {ActionDatCoc} from './../../redux/actions';
+ class XacNhanDat extends Component {
     render() {
         return (
             <View style={styles.container}>
                 <View style={styles.imagecontainer}>
                    <Image style={styles.logo}
-                    source={require('../../assets/images/nha1.png')}/>
+                   source={{uri:this.props.hinhanh}}/>
                 </View>
                 <View style={styles.infomationcontainer}>
-                    <Text style={styles.textcontainer}>Apartment name :</Text>
-                    <Text style={styles.textcontainer}>Apartment price :</Text>
-                    <Text style={styles.textcontainer}>Furniture price :</Text>
-                    <Text style={styles.textcontainer}>Terms of payment :</Text>
-                </View>
+                    <Text style={styles.textcontainer}>Apartment name : {this.props.tencanho}</Text>
+                    
+                    <Text style={styles.textcontainer}>Apartment price : ${this.props.giatien}</Text>
+                   
+                   
+                </View>{console.log(`hinh anh can ho xac nhan dat ${this.props.hinhanh}`)}
                 <View style={styles.buttoncontainer}>
                     <TouchableOpacity    style={styles.button}
                         onPress={() => this.props.navigation.navigate('XacNhanTT')}>
@@ -22,7 +24,15 @@ export default class XacNhanDat extends Component {
                         
                    </TouchableOpacity>
                    <TouchableOpacity    style={styles.button}
-                        onPress={() => this.props.navigation.navigate('XacNhanDat')}>
+                        onPress={() => 
+                        {
+                            const idcanho=this.props.idcanho;
+                            const token=this.props.token;
+                            this.props.onDatCoc({idcanho,token})
+                            this.props.navigation.navigate('KhamPha')
+
+                        }
+                        }>
                         <Text style={styles.textbtn}>Book now</Text>
                    </TouchableOpacity>
                 </View>
@@ -30,6 +40,28 @@ export default class XacNhanDat extends Component {
         )
     }
 }
+function mapStatetoProps(state){
+    return{
+        //kết quả lấy từ reducer
+     
+      token:state.dangNhapReducers.token,
+      //  idTK:state.dangNhapReducers.idTK,
+      idcanho:state.canHoReducers.idCanHo,
+      hinhanh:state.canHoReducers.hinhanh,
+      giatien:state.canHoReducers.giatien,
+      tencanho:state.canHoReducers.tencanho
+
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onDatCoc:(inputDatCoc)=>{
+            dispatch(ActionDatCoc(inputDatCoc));
+        },     
+    }
+}
+
+export default connect(mapStatetoProps,mapDispatchToProps)(XacNhanDat)
 const styles=StyleSheet.create({
     container:{
         flex:1,
@@ -74,4 +106,9 @@ const styles=StyleSheet.create({
         fontSize:18,
         color:"black",
     },
+    logo:{
+        height:200,
+        width:300,
+        borderRadius:10
+    }
 })

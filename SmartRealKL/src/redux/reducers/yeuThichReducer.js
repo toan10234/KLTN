@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 const defaultState={
    
-    loading:'n/n',
     yeuThich:[]
 }
 const yeuThichReducers =(state=defaultState,action)=>{
@@ -13,10 +12,7 @@ const yeuThichReducers =(state=defaultState,action)=>{
         case FETCH_SUCCEESED_YEUTHICH://lấy từ serve về
             return {...state, yeuThich:action.receivedYeuThich};
         
-        case LOADING_TRUE:
-            return{...state,loading:"true"};
-        case LOADING_FALSE:
-            return{...state,loading:"false"};
+
         default:
             return state;
     }

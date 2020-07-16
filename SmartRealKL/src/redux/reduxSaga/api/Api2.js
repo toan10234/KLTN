@@ -1,7 +1,7 @@
 
 import {routerAPI} from './Router'
 const urlGetTK=`${routerAPI}/api/login`;
-import axios from 'axios';
+
 export async function fetchData(inputTK){
     try{
        
@@ -23,7 +23,7 @@ export async function fetchData(inputTK){
         
     
         const dataRecied=await response.json();
-        console.log(`repone: ${JSON.stringify(dataRecied)}`)
+        console.log(`repone sau khi dang nhap: ${JSON.stringify(dataRecied)}`)
         return dataRecied;
     }catch(e){
         console.log(e);

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 const defaultState={
    
-    loading:'n/n',
     binhLuan:[],
     idCanHo:''
 }
@@ -16,10 +15,7 @@ const binhLuanReducers =(state=defaultState,action)=>{
             return {...state, binhLuan:action.receivedBinhLuan};
         case BINH_LUAN:
             return {...state};
-        case LOADING_TRUE:
-            return{...state,loading:"true"};
-        case LOADING_FALSE:
-            return{...state,loading:"false"};
+
         default:
             return state;
     }

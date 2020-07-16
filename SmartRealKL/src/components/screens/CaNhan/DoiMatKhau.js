@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
-import { Text, View,StyleSheet ,TouchableOpacity,TextInput} from 'react-native'
+import { Text, View,StyleSheet ,TouchableOpacity,TextInput,KeyboardAvoidingView} from 'react-native'
+import { connect } from "react-redux";
+import {ActionDoiMatKhau} from './../../../redux/actions';
+ class DoiMatKhau extends Component {
 
-export default class DoiMatKhau extends Component {
+    constructor(props){
+        super(props);
+        this.state={newpassword:'',renewpassword:''};
+    }
     render() {
         return (
             <View style={styles.container}>
                 <View style={styles.containertitle}>
                     <Text style={styles.title}>Change password</Text>
                 </View>
-
+                <KeyboardAvoidingView behavior='padding' style={styles.container}>
                 <View style={styles.containerinfomation}>
                  <View style={styles.containerinput}>
                         <Text style={styles.titleinput}>Old password :</Text>
@@ -16,6 +22,7 @@ export default class DoiMatKhau extends Component {
                         placeholder="Enter password ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                     
                         />
                    </View>
                    <View style={styles.containerinput}>
@@ -24,6 +31,8 @@ export default class DoiMatKhau extends Component {
                         placeholder="Enter password ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({newpassword:text})}
+                        value={this.state.newpassword}
                         />
                    </View>
                    <View style={styles.containerinput}>
@@ -32,26 +41,59 @@ export default class DoiMatKhau extends Component {
                         placeholder="Enter password ..."
                         placeholderTextColor='black'
                         autoCorect={false}
+                        onChangeText={(text) => this.setState({renewpassword:text})}
+                        value={this.state.renewpassword}
                         />
                    </View>
-                </View>
-
-                <View style={styles.containerbtn}>
+                   <View style={styles.containerbtn}>
                    <TouchableOpacity    style={styles.button}
                         onPress={() => this.props.navigation.navigate('CaNhan')}>
                         <Text style={styles.textbtn}>Cancel</Text>
                         
                    </TouchableOpacity>
                    <TouchableOpacity    style={styles.button}
-                        onPress={() => this.props.navigation.navigate('DangNhap')}>
+                        onPress={() => {
+                            const {newpassword,renewpassword}=this.state;
+                              const idTK=this.props.idTK;
+                              const token=this.props.token;
+                              if (!newpassword.length || !renewpassword.length ){
+                                alert('you must  enter new password and retype password')
+                                return; 
+                              }
+                              if(renewpassword!=newpassword){
+                                alert('you must  enter new password same retype password')
+                                return; 
+                              }
+                             
+                              this.props.onDoiMatkhau({idTK,token,newpassword});
+                              
+                             this.props.navigation.navigate('DangNhap')}}>
                         <Text style={styles.textbtn}>Confirm</Text>
                    </TouchableOpacity>
                 </View>
+                </View>
+
                 
+                </KeyboardAvoidingView>
             </View>
         )
     }
 }
+function mapStatetoProps(state){
+    return{
+        //kết quả lấy từ reducer    
+        token:state.dangNhapReducers.token,
+        idTK:state.dangNhapReducers.idTK,
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        onDoiMatkhau:(inputDoiMatKhau)=>{
+            dispatch(ActionDoiMatKhau(inputDoiMatKhau));
+        }
+    }
+}
+export default connect(mapStatetoProps,mapDispatchToProps)(DoiMatKhau)
 const styles=StyleSheet.create({
     container:{
         backgroundColor:'#F2C94D',
@@ -59,7 +101,7 @@ const styles=StyleSheet.create({
         flexDirection:'column'
     },
     containertitle:{
-        flex:0.1,
+        height:55,
         justifyContent:"center" ,
         marginTop:10,
         marginLeft:10,
@@ -69,10 +111,12 @@ const styles=StyleSheet.create({
     
     },
     containerinfomation:{
-        flex:0.65,
-        marginTop:10,
-        marginLeft:10,
-        marginRight:10,
+        position:"absolute",
+        left:10,
+        right:10,
+        bottom:40,
+        height:300,
+        
         borderRadius:5,
         elevation:5,
         justifyContent:'center',
@@ -95,7 +139,8 @@ const styles=StyleSheet.create({
       
     },
     button:{
-        flex:0.4,
+        height:40,
+        width:120,
         margin:5,
         borderRadius:5,
         borderWidth: 2,

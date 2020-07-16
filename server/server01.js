@@ -71,6 +71,15 @@ router.get("/canho",function (req,res){
             }
     });
 });
+router.get("/canho/:id?",function (req,res){
+    ModelDB.getCanHoId(req.params.id,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json(rows);
+            }
+         });
+});
 router.get("/vitri/:id?",function (req,res){
     if(req.params.id){
           ModelDB.getViTriId(req.params.id,function(err,rows){
@@ -117,6 +126,35 @@ router.get("/yeuthich/:id",function (req,res){
             }
     });
 });
+
+router.get("/hosophaply/:id",function (req,res){
+    ModelDB.getHoSoPhapLy(req.params.id,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json(rows);
+            }
+    });
+});
+
+router.get("/matbang/:id",function (req,res){
+    ModelDB.getMatBang(req.params.id,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json(rows);
+            }
+    });
+});
+router.get("/tienichkhu/:id",function (req,res){
+    ModelDB.getTienIchKhu(req.params.id,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json(rows);
+            }
+    });
+});
 // router.post('/api/login',function (req,res){
 //         if(req.body.username=='toandao' && req.body.password=='123'){
 //             var token=jwt.sign({ten:'toandao'},'keysecrect',{algorithm:'HS256',expiresIn:'3h'});
@@ -125,6 +163,7 @@ router.get("/yeuthich/:id",function (req,res){
 //              res.send('sai mat khau hoac tai khoan');
 //         }
 // });
+
 router.use(function (req,res,next) {
     if (req.headers && req.headers.authorization && String(req.headers.authorization.split(' ')[0]).toLowerCase() === 'bearer') {
             var token=req.headers.authorization.split(' ')[1];
@@ -186,23 +225,51 @@ router.delete("/canho/:id",function (req,res){
     });
 });
 
+router.post("/canho/search/",function (req,res) {
+    ModelDB.timKiemCanHo(req.body,function(err,rows){
+        if(err){
+            res.json(err);
+        } else {
+            res.json(rows);
+        }
+    })
+    
+})
+
+
+
 //Yêu Thích
 
 
 router.post('/yeuthich/:id',function(req,res){
-        ModelDB.themYeuThich(req.params.id,req.body,function(err,count){
-            if(err){
-                res.json(err);
+        ModelDB.checkYeuThich(req.params.id,req.body,function(err,rows){  
+            if(rows.length>0){
+                ModelDB.xoaYeuThich(req.params.id,req.body,function(err,rows){
+                    if(err){
+                            res.json(err);
+                        } else {
+                            res.json({
+                                message:'xóa Success!'
+                            });
+                        }
+                });
             }
             else{
-                res.json({
-                    message:'Success!'
+                ModelDB.themYeuThich(req.params.id,req.body,function(err,rows){
+                    if(err){
+                        res.json(err);
+                    }
+                    else{
+                        res.json({
+                            message:'thêm Success!'
+                        });
+                    }
                 });
             }
         });
 });
 router.delete("/yeuthich/:id",function (req,res){
-    ModelDB.xoaYeuThich(req.params.id,function(err,rows){
+    ModelDB.xoaYeuThich(req.params.id,req.body,function(err,rows){
         if(err){
                 res.json(err);
             } else {
@@ -251,6 +318,33 @@ router.put("/vitri/:id",function (req,res){
             }
     });
 });
+router.post('/editvitrichitiet/:id',function(req,res){
+    ModelDB.checkViTri(req.params.id,req.body,function(err,rows){  
+        if(rows.length>0){
+            ModelDB.suaViTri(req.params.id,req.body,function(err,rows){
+                if(err){
+                        res.json(err);
+                    } else {
+                        res.json({
+                            message:'Success!'
+                        });
+                    }
+            });
+        }
+        else{
+            ModelDB.themVitri(req.params.id,req.body,function(err,rows){
+                if(err){
+                    res.json(err);
+                }
+                else{
+                    res.json({
+                        message:'Success!'
+                    });
+                }
+            });
+        }
+    });
+});
 // router.get("/hello",function (req,res) {
 //     res.send("Hello");
 // });
@@ -266,5 +360,109 @@ router.post('/binhluan/:id',function(req,res){
             });
         }
     });
+});
+
+//hồ sơ pháp lý
+router.post('/hosophaply/:id',function(req,res){
+    ModelDB.themHoSoPhapLy(req.params.id,req.body,function(err,count){
+        if(err){
+            res.json(err);
+        }
+        else{
+            res.json({
+                message:'Success!'
+            });
+        }
+    });
+});
+
+router.put("/hosophaply/:id",function (req,res){
+    ModelDB.suaHoSoPhapLy(req.params.id,req.body,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json({
+                    message:'Success!'
+                });
+            }
+    });
+});
+
+
+// Mặt Bằng
+router.post('/matbang/:id',function(req,res){
+    ModelDB.themMatBang(req.params.id,req.body,function(err,count){
+        if(err){
+            res.json(err);
+        }
+        else{
+            res.json({
+                message:'Success!'
+            });
+        }
+    });
+});
+
+router.put("/matbang/:id",function (req,res){
+    ModelDB.suaMatBang(req.params.id,req.body,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json({
+                    message:'Success!'
+                });
+            }
+    });
+});
+
+
+
+//Tien Ich khu
+router.post('/tienichkhu/:id',function(req,res){
+    ModelDB.themTienIch(req.params.id,req.body,function(err,count){
+        if(err){
+            res.json(err);
+        }
+        else{
+            res.json({
+                message:'Success!'
+            });
+        }
+    });
+});
+router.put("/tienichkhu/:id",function (req,res){
+    ModelDB.suaTienIch(req.params.id,req.body,function(err,rows){
+        if(err){
+                res.json(err);
+            } else {
+                res.json({
+                    message:'Success!'
+                });
+            }
+    });
+});
+router.put('/doimatkhau',function(req,res){
+    ModelDB.doiMatKhau(req.body,function(err,rows){
+        if(err){
+            res.json(err);
+        }
+        else{
+            res.json({
+                message:'Success!'
+            });
+        }
+    })
+});
+router.post('/datcoc/:id?',function(req,res){
+    ModelDB.datCoc(req.params.id,function(err,rows){
+        if(err){
+            res.json(err);
+        }
+        else{
+            res.json({
+                message:'Success !'
+            });
+        }
+    })
 });
 router.listen(3000);

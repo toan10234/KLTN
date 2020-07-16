@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import Colors from './../../themes/Corlors'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BinhLuanData from './../../assets/data/BinhLuandata';
+import {BinhLuanAction} from './../../redux/actions';
 
 
 export class BinhLuan extends Component {
@@ -18,16 +19,16 @@ export class BinhLuan extends Component {
     }
       componentDidMount() {
         var that = this;
-        var date = new Date().getDate(); //Current Date
+        var date = new Date().getDate() + 1 ; //Current Date
         var month = new Date().getMonth() + 1; //Current Month
         var year = new Date().getFullYear(); //Current Year
-        var hours = new Date().getHours(); //Current Hours
-        var min = new Date().getMinutes(); //Current Minutes
-        var sec = new Date().getSeconds(); //Current Seconds
+        // var hours = new Date().getHours(); //Current Hours
+        // var min = new Date().getMinutes(); //Current Minutes
+        // var sec = new Date().getSeconds(); //Current Seconds
         that.setState({
           //Setting the value of the date time
           date:
-            year + '/' + month + '/' + date + ' ' + hours + ':' + min + ':' + sec,
+            year + '-' + month + '-' + date,
         });
       }
     render() {
@@ -42,16 +43,27 @@ export class BinhLuan extends Component {
                 <View style={styles.listBinhLuan}>
                     <FlatList
                     style={{margin:7}}
+                    keyExtractor={item => item.IDBinhLuan.toString()}
+                    ItemSeparatorComponent={this.FlatListItemSeparator} 
+                    
                     data={this.props.binhluan}
                             renderItem={({item,index})=>{
                                 return(
-                                    <View style={{flexDirection:'row',marginTop:5}}>
-                                        <Text style={styles.txtHoVaTen}> {item.HoVaTen} </Text>
-                                        <Text style={styles.txtNoiDung}>{item.NoiDung}</Text>
-                                        <Text style={styles.txtNgay}>{item.ThoiGianBinhLuan.slice(0,10)}</Text>
+                                   
+                                    <View style={{flexDirection:'column',marginTop:5}}>
+                                        <View style={{flexDirection:'row'}}>
+                                            
+                                            <Text style={styles.txtHoVaTen}> {item.HoVaTen} </Text>
+                                            <Text style={styles.txtNoiDung}>{item.NoiDung}</Text>
+                                            
+                                        </View>
+                                        <View>
+                                             <Text style={styles.txtNgay}>{item.ThoiGianBinhLuan.slice(0,10)}</Text>
+                                        </View>
+                                        
                                     </View>
                                 );
-                            }}keyExtractor={item => item.IDBinhLuan}
+                            }}
                     >
 
                     </FlatList>
@@ -70,7 +82,21 @@ export class BinhLuan extends Component {
                            >
 
                     </TextInput>
-                    <Icon  name="send-circle-outline" color={Colors.appYellow} size={30}></Icon>
+                    <TouchableOpacity onPress={()=>{
+                                const {comment,date}=this.state;
+                                const idThongTinTK=this.props.idThongTinTK;
+                                const idCanHoBL=this.props.idCanHoBL;
+                                const token=this.props.token;
+                                console.log(`id can ho BL ${idCanHoBL}`)
+                              if (!comment.length){
+                                alert('you must  enter comment')
+                                return; 
+                              }
+                             this.props.onBinLuan({comment,idThongTinTK,idCanHoBL,date,token})}}
+                            >
+                         <Icon  name="send-circle-outline" color={Colors.appYellow} size={30}></Icon>
+                    </TouchableOpacity>
+                    
                 </View>
                 </KeyboardAvoidingView>
                 </View>
@@ -83,8 +109,9 @@ export class BinhLuan extends Component {
 
 const mapStateToProps = (state) => ({
     binhluan:state.binhLuanReducers.binhLuan,
-    idCanHo:state.binhLuanReducers.idCanHo,
-    idTK:state.thongTinTKReducers.idThongTinTK,
+    idCanHoBL:state.binhLuanReducers.idCanHo,
+    idThongTinTK:state.thongTinTKReducers.idThongTinTK,
+    token:state.dangNhapReducers.token
 })
 const mapDispatchToProps=(dispatch)=>{
     return{
@@ -131,12 +158,11 @@ const styles=StyleSheet.create({
     txtHoVaTen:{
         backgroundColor:Colors.appPrimaryColor,
         borderRadius:4,
+        height:25,
         fontSize:18,
         fontWeight:'bold'
     },
     txtNgay:{
-        position:'absolute',
-        right:0,
         color:'gray',
         fontSize:13
     },
